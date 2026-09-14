@@ -11,6 +11,8 @@ export class Config {
 	readonly retentionDays: number;
 	readonly rateLimit: number;
 	readonly plugins: string[];
+	readonly oidcIssuer?: string;
+	readonly oidcAudience?: string;
 	readonly trustedProxies = new BlockList();
 	constructor(readonly env: Environment) {
 		this.adminKey = this.required("KEYZORI_ADMIN_KEY");
@@ -39,6 +41,8 @@ export class Config {
 			3650,
 		);
 		this.rateLimit = this.integer("KEYZORI_RATE_LIMIT", 120, 1, 100000);
+		this.oidcIssuer = env.KEYZORI_OIDC_ISSUER?.trim() || undefined;
+		this.oidcAudience = env.KEYZORI_OIDC_AUDIENCE?.trim() || "keyzori";
 		this.plugins = (env.KEYZORI_PLUGINS ?? "")
 			.split(",")
 			.map((s) => s.trim())

@@ -28,7 +28,11 @@ export function createHttp(
 	state: { ready: boolean },
 	ip = new ClientIp(config),
 ) {
-	const guard = adminGuard(config.adminKey);
+	const guard = adminGuard({
+		adminKey: config.adminKey,
+		oidcIssuer: config.oidcIssuer,
+		oidcAudience: config.oidcAudience,
+	});
 	const rate = new RateLimiter(services.redis, config.rateLimit);
 	const app = new Elysia({
 		name: "keyzori",
@@ -165,6 +169,13 @@ export function createHttp(
 								name: "X-Admin-Key",
 								description:
 									"Server administration secret. Never distribute this key in client applications.",
+							},
+							bearerAuth: {
+								type: "http",
+								scheme: "bearer",
+								bearerFormat: "JWT",
+								description:
+									"Machine-to-Machine OAuth 2.0 / OIDC JWT access token issued by Muljax ID.",
 							},
 							session: {
 								type: "http",

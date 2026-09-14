@@ -35,7 +35,10 @@ test("OpenAPI documents every core operation with categories and preserves auth"
 			expect(ids.has(operation.operationId as string)).toBe(false);
 			ids.add(operation.operationId as string);
 			if (path.startsWith("/admin/"))
-				expect(operation.security, path).toEqual([{ adminKey: [] }]);
+				expect(operation.security, path).toEqual([
+					{ adminKey: [] },
+					{ bearerAuth: [] },
+				]);
 		}
 	}
 	expect(ids.size).toBe(40);
@@ -118,7 +121,7 @@ test("enabled Stripe routes retain summaries, categories, and separate authentic
 			expect(operation.summary?.length).toBeGreaterThan(5);
 			expect(operation.description?.length).toBeGreaterThan(30);
 			expect(operation.security).toEqual(
-				path.includes("/admin/") ? [{ adminKey: [] }] : [],
+				path.includes("/admin/") ? [{ adminKey: [] }, { bearerAuth: [] }] : [],
 			);
 		}
 	}
